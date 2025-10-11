@@ -21,6 +21,7 @@
                     <th scope="col">Nama Matakuliah</th>
                     <th scope="col">Nama Dosen</th>
                     <th scope="col">Jurusan</th>
+                    <th scope="col">Jumlah SKS</th>
                      <th scope="col">Action</th>
                 </tr>
             </thead>
@@ -32,6 +33,7 @@
                         <td>{{ $mk->nama_Matakuliah }}</td>
                            <td>{{ $mk->dosen->name }}</td>
                         <td>{{ $mk->jurusan }}</td>
+                        <td>{{ $mk->sks }}</td>
                         <td>
                         <a href="/matakuliah/ {{$mk->id_MK}}" class="btn btn-primary me-2">EDIT</a>
                         <button type="button" class="btn btn-danger me-2" data-bs-toggle="modal" data-bs-target="#hapus{{ $mk->id_MK}}">Hapus</button>

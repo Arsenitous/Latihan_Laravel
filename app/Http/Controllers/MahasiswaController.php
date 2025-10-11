@@ -26,6 +26,7 @@ class MahasiswaController extends Controller
             'tanggal_lahir' => 'required',
             'jurusan' => 'required',
             'angkatan' => 'required',
+            'sks'=>'required',
         ]);
 
         Mahasiswa::create($data);
@@ -54,6 +55,7 @@ class MahasiswaController extends Controller
             'tanggal_lahir' => 'required',
             'jurusan' => 'required',
             'angkatan' => 'required',
+             'sks'=>'required',
         ]);
 
         Mahasiswa::where('id', $id)->update($data);

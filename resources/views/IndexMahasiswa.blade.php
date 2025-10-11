@@ -26,6 +26,7 @@
                     <th scope="col">Tanggal Lahir</th>
                     <th scope="col">Jurusan</th>
                     <th scope="col">Angkatan</th>
+                    <th scope="col">Total SKS</th>
                     <th scope="col">Action</th>
                 </tr>
             </thead>
@@ -39,7 +40,9 @@
                         <td>{{ $mhs->tanggal_lahir }}</td>
                         <td>{{ $mhs->jurusan }}</td>
                         <td>{{ $mhs->angkatan }}</td>
+                        <td>{{ $mhs->max_sks }}</td>
                         <td>
+                        <a href="/mahasiswa/ {{$mhs->id}}" class="btn btn-secondary me-2 text-white">Detail</a>
                         <a href="/mahasiswa/ {{$mhs->id}}" class="btn btn-primary me-2">EDIT</a>
                         <button type="button" class="btn btn-danger me-2" data-bs-toggle="modal" data-bs-target="#hapus{{ $mhs->id}}">Hapus</button>
                         </td>

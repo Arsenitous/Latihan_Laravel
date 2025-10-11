@@ -11,6 +11,7 @@ class Matakuliah extends Model
         'nama_Matakuliah',
         'jurusan',
         'id_Dosen',
+        'sks',
     ];
 
     protected $primaryKey ='id_MK';
@@ -21,6 +22,12 @@ class Matakuliah extends Model
     {
         return $this->belongsTo(Dosen::class, 'id_Dosen', 'id_Dosen');
     }
+
+    public function mahasiswa()
+{
+    return $this->belongsToMany(Mahasiswa::class, 'table_matakuliah_mahasiswa', 'id_MK', 'id_mahasiswa');
+}
+
 
 }
 

@@ -33,6 +33,12 @@
           @endforeach
         </select>
          </div>
+
+          <!-- SKS -->
+        <div class="mb-3">
+          <label for="inputNama" class="form-label">SKS</label>
+          <input type="text" name="sks" id="inputNim" class="form-control" value="{{ $item->sks }}">
+        </div>
         
         <!-- Jurusan -->
         <div class="mb-3">

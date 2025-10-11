@@ -26,6 +26,7 @@ class MatakuliahController extends Controller
             'nama_Matakuliah' => 'required',
             'jurusan' => 'required',
             'id_Dosen' => 'required',
+            'sks'=>'required',
         ]);
 
     Matakuliah::create($data);
@@ -55,6 +56,7 @@ class MatakuliahController extends Controller
             'nama_Matakuliah' => 'required',
             'jurusan' => 'required',
             'id_Dosen' => 'required',
+            'sks'=>'required',
         ]);
 
         Matakuliah::where('id_MK', $id)->update($data);

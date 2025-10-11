@@ -12,12 +12,16 @@ class Mahasiswa extends Model
         'tempat_lahir',
         'tanggal_lahir',
         'jurusan',
-        'angkatan'
+        'angkatan',
+        'max_sks'
     ];
 
     protected $primaryKey ='id';
 
     protected $table = 'table_mahasiswa';
 
-    
+    public function matakuliah()
+{
+    return $this->belongsToMany(Matakuliah::class, 'table_matakuliah_mahasiswa', 'id_mahasiswa', 'id_MK');
+}
 }
