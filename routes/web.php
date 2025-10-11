@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', [MahasiswaController::class, 'index']);
+
 Route::get('/mahasiswa', [MahasiswaController::class, 'index'])->name('Main');
 Route::get('/add', [MahasiswaController::class, 'create'])->name('AddMahasiswa');
 Route::post('/add', [MahasiswaController::class, 'store'])->name('StoreMahasiswa');

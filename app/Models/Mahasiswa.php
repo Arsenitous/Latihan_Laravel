@@ -24,4 +24,10 @@ class Mahasiswa extends Model
 {
     return $this->belongsToMany(Matakuliah::class, 'table_matakuliah_mahasiswa', 'id_mahasiswa', 'id_MK');
 }
+
+//   public function totalSks()
+//     {
+//         return $this->matakuliah()->sum('sks');
+//     }
+
 }
