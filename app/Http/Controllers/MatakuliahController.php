@@ -21,13 +21,44 @@ class MatakuliahController extends Controller
     }
 
     public function store(Request $request){
-        $data = $request->validate([
-            'kode_MK' => 'required',
-            'nama_Matakuliah' => 'required',
-            'jurusan' => 'required',
-            'id_Dosen' => 'required',
-            'sks'=>'required',
-        ]);
+        $rules = [
+            'kode_MK' => 'required|string|min:3|max:10',
+            'nama_Matakuliah' => 'required|string|min:2|max:100',
+            'jurusan' => 'required|in:Sistem Teknologi Informasi,Bisnis Digital,Kewirausahaan',
+            'id_Dosen' => 'required|integer|exists:table_dosen,id_Dosen',
+            'sks'=>'required|integer|min:1|max:3',
+        ];
+
+        $messages = [
+    // Kode MK
+    'kode_MK.required' => 'Kode mata kuliah wajib diisi!',
+    'kode_MK.string' => 'Kode mata kuliah harus berupa teks!',
+    'kode_MK.min' => 'Kode mata kuliah minimal 3 karakter!',
+    'kode_MK.max' => 'Kode mata kuliah maksimal 10 karakter!',
+
+    // Nama Mata Kuliah
+    'nama_Matakuliah.required' => 'Nama mata kuliah wajib diisi!',
+    'nama_Matakuliah.string' => 'Nama mata kuliah harus berupa teks!',
+    'nama_Matakuliah.min' => 'Nama mata kuliah minimal 2 karakter!',
+    'nama_Matakuliah.max' => 'Nama mata kuliah maksimal 100 karakter!',
+
+    // Jurusan
+    'jurusan.required' => 'Jurusan wajib dipilih!',
+    'jurusan.in' => 'Jurusan yang dipilih tidak valid!',
+
+    // Dosen
+    'id_Dosen.required' => 'Dosen pengampu wajib dipilih!',
+    'id_Dosen.integer' => 'ID dosen harus berupa angka!',
+    'id_Dosen.exists' => 'Dosen yang dipilih tidak ditemukan!',
+
+    // SKS
+    'sks.required' => 'Jumlah SKS wajib diisi!',
+    'sks.integer' => 'Jumlah SKS harus berupa angka!',
+    'sks.min' => 'Minimal 1 SKS!',
+    'sks.max' => 'Maksimal 3 SKS!',
+];
+
+    $data = $request->validate($rules, $messages);
 
     Matakuliah::create($data);
 
@@ -51,13 +82,44 @@ class MatakuliahController extends Controller
 
     public function update($id,Request $request ){
 
-         $data = $request->validate([
-            'kode_MK' => 'required',
-            'nama_Matakuliah' => 'required',
-            'jurusan' => 'required',
-            'id_Dosen' => 'required',
-            'sks'=>'required',
-        ]);
+           $rules = [
+            'kode_MK' => 'required|string|min:3|max:10',
+            'nama_Matakuliah' => 'required|string|min:2|max:100',
+            'jurusan' => 'required|in:Sistem Teknologi Informasi,Bisnis Digital,Kewirausahaan',
+            'id_Dosen' => 'required|integer|exists:table_dosen,id_Dosen',
+            'sks'=>'required|integer|min:1|max:3',
+        ];
+
+        $messages = [
+    // Kode MK
+    'kode_MK.required' => 'Kode mata kuliah wajib diisi!',
+    'kode_MK.string' => 'Kode mata kuliah harus berupa teks!',
+    'kode_MK.min' => 'Kode mata kuliah minimal 3 karakter!',
+    'kode_MK.max' => 'Kode mata kuliah maksimal 10 karakter!',
+
+    // Nama Mata Kuliah
+    'nama_Matakuliah.required' => 'Nama mata kuliah wajib diisi!',
+    'nama_Matakuliah.string' => 'Nama mata kuliah harus berupa teks!',
+    'nama_Matakuliah.min' => 'Nama mata kuliah minimal 2 karakter!',
+    'nama_Matakuliah.max' => 'Nama mata kuliah maksimal 100 karakter!',
+
+    // Jurusan
+    'jurusan.required' => 'Jurusan wajib dipilih!',
+    'jurusan.in' => 'Jurusan yang dipilih tidak valid!',
+
+    // Dosen
+    'id_Dosen.required' => 'Dosen pengampu wajib dipilih!',
+    'id_Dosen.integer' => 'ID dosen harus berupa angka!',
+    'id_Dosen.exists' => 'Dosen yang dipilih tidak ditemukan!',
+
+    // SKS
+    'sks.required' => 'Jumlah SKS wajib diisi!',
+    'sks.integer' => 'Jumlah SKS harus berupa angka!',
+    'sks.min' => 'Minimal 1 SKS!',
+    'sks.max' => 'Maksimal 3 SKS!',
+];
+
+    $data = $request->validate($rules, $messages);
 
         Matakuliah::where('id_MK', $id)->update($data);
 

@@ -5,6 +5,19 @@
   <div class="card bg-dark text-white" style="width: 40rem;">
     <div class="card-header text-center fs-3">Edit Matakuliah</div>
     <div class="card-body">
+
+        @if ($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <strong>Terjadi kesalahan:</strong>
+          <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+              <li>{{ $error }}</li>
+            @endforeach
+          </ul>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      @endif
+
       <form action="{{ route('UpdateMatakuliah', $item->id_MK) }}" method="POST">
                @method('PUT')
         @csrf
