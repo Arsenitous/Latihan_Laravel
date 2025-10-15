@@ -17,12 +17,39 @@ class DosenController extends Controller
     }
 
       public function store(Request $request){
-        $data = $request->validate([
-            'name' => 'required',
-            'NIP' => 'required',
-            'pendidikan_terakhir' => 'required',
-            'jurusan' => 'required',
-        ]);
+       $rules = [
+        'name' => 'required|string|min:3|max:100',
+        'NIP' => 'required|string|min:5|max:20|unique:table_dosen,NIP',
+        'pendidikan_terakhir' => 'required|string|min:2|max:50',
+        'jurusan' => 'required|in:Sistem Teknologi Informasi,Bisnis Digital,Kewirausahaan',
+    ];
+
+    $messages = [
+        // Nama
+        'name.required' => 'Nama dosen wajib diisi!',
+        'name.string' => 'Nama dosen harus berupa teks!',
+        'name.min' => 'Nama dosen minimal 3 karakter!',
+        'name.max' => 'Nama dosen maksimal 100 karakter!',
+
+        // NIP
+        'NIP.required' => 'NIP wajib diisi!',
+        'NIP.string' => 'NIP harus berupa teks!',
+        'NIP.min' => 'NIP minimal 5 karakter!',
+        'NIP.max' => 'NIP maksimal 20 karakter!',
+        'NIP.unique' => 'NIP ini sudah terdaftar!',
+
+        // Pendidikan
+        'pendidikan_terakhir.required' => 'Pendidikan terakhir wajib diisi!',
+        'pendidikan_terakhir.string' => 'Pendidikan terakhir harus berupa teks!',
+        'pendidikan_terakhir.min' => 'Pendidikan terakhir minimal 2 karakter!',
+        'pendidikan_terakhir.max' => 'Pendidikan terakhir maksimal 50 karakter!',
+
+        // Jurusan
+        'jurusan.required' => 'Jurusan wajib dipilih!',
+        'jurusan.in' => 'Jurusan yang dipilih tidak valid!',
+    ];
+
+    $data = $request->validate($rules, $messages);
 
    Dosen::create($data);
 
@@ -47,12 +74,39 @@ class DosenController extends Controller
 
  public function update($id,Request $request ){
 
-         $data = $request->validate([
-            'name' => 'required',
-            'NIP' => 'required',
-            'pendidikan_terakhir' => 'required',
-            'jurusan' => 'required',
-        ]);
+        $rules = [
+        'name' => 'required|string|min:3|max:100',
+        'NIP' => 'required|string|min:5|max:20|unique:table_dosen,NIP',
+        'pendidikan_terakhir' => 'required|string|min:2|max:50',
+        'jurusan' => 'required|in:Sistem Teknologi Informasi,Bisnis Digital,Kewirausahaan',
+    ];
+
+    $messages = [
+        // Nama
+        'name.required' => 'Nama dosen wajib diisi!',
+        'name.string' => 'Nama dosen harus berupa teks!',
+        'name.min' => 'Nama dosen minimal 3 karakter!',
+        'name.max' => 'Nama dosen maksimal 100 karakter!',
+
+        // NIP
+        'NIP.required' => 'NIP wajib diisi!',
+        'NIP.string' => 'NIP harus berupa teks!',
+        'NIP.min' => 'NIP minimal 5 karakter!',
+        'NIP.max' => 'NIP maksimal 20 karakter!',
+        'NIP.unique' => 'NIP ini sudah terdaftar!',
+
+        // Pendidikan
+        'pendidikan_terakhir.required' => 'Pendidikan terakhir wajib diisi!',
+        'pendidikan_terakhir.string' => 'Pendidikan terakhir harus berupa teks!',
+        'pendidikan_terakhir.min' => 'Pendidikan terakhir minimal 2 karakter!',
+        'pendidikan_terakhir.max' => 'Pendidikan terakhir maksimal 50 karakter!',
+
+        // Jurusan
+        'jurusan.required' => 'Jurusan wajib dipilih!',
+        'jurusan.in' => 'Jurusan yang dipilih tidak valid!',
+    ];
+
+    $data = $request->validate($rules, $messages);
 
         Dosen::where('id_Dosen', $id)->update($data);
 

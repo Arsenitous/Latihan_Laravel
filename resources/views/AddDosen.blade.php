@@ -11,18 +11,27 @@
         <div class="mb-3">
           <label for="inputkode" class="form-label">Nama Dosen</label>
           <input type="text" name="name" id="inputName" class="form-control">
+            @error('name')
+            <small class="text-danger">{{ $message }}</small>
+          @enderror
         </div>
 
         <!-- NIP -->
         <div class="mb-3">
           <label for="inputNama" class="form-label">NIP</label>
           <input type="text" name="NIP" id="inputNim" class="form-control">
+           @error('NIP')
+            <small class="text-danger">{{ $message }}</small>
+          @enderror
         </div>
 
         <!-- Pendidikan Terakhir -->
         <div class="mb-3">
           <label for="inputNama" class="form-label">Pendidikan Terakhir</label>
           <input type="text" name="pendidikan_terakhir" id="inputNim" class="form-control">
+           @error('pendidikan_terakhir')
+            <small class="text-danger">{{ $message }}</small>
+          @enderror
         </div>
 
     
@@ -41,6 +50,9 @@
             <input class="form-check-input" name="jurusan" type="radio" name="jurusan" id="jurusanKWU" value="Kewirausahaan">
             <label class="form-check-label" for="jurusanKWU">Kewirausahaan</label>
           </div>
+           @error('jurusan')
+            <small class="text-danger">{{ $message }}</small>
+          @enderror
         </div>
 
         <!-- Tombol -->
