@@ -12,24 +12,36 @@
         <div class="mb-3">
           <label for="inputName" class="form-label">Nama</label>
           <input type="text" name="name" id="inputName" class="form-control" required>
+           @error('name')
+            <small class="text-danger">{{ $message }}</small>
+          @enderror
         </div>
 
         <!-- NIM -->
         <div class="mb-3">
           <label for="inputNim" class="form-label">NIM</label>
           <input type="text" name="NIM" id="inputNim" class="form-control" required>
+           @error('NIM')
+            <small class="text-danger">{{ $message }}</small>
+          @enderror
         </div>
 
         <!-- Tempat Lahir -->
         <div class="mb-3">
           <label for="inputTempat" class="form-label">Tempat Lahir</label>
           <input type="text" name="tempat_lahir" id="inputTempat" class="form-control" required>
+           @error('tempat_lahir')
+            <small class="text-danger">{{ $message }}</small>
+          @enderror
         </div>
 
         <!-- Tanggal Lahir -->
         <div class="mb-3">
           <label for="inputTanggal" class="form-label">Tanggal Lahir</label>
           <input type="date" name="tanggal_lahir" id="inputTanggal" class="form-control" required>
+           @error('tanggal_lahir')
+            <small class="text-danger">{{ $message }}</small>
+          @enderror
         </div>
 
         <!-- Jurusan -->
@@ -47,12 +59,18 @@
             <input class="form-check-input" type="radio" name="jurusan" id="jurusanKWU" value="Kewirausahaan">
             <label class="form-check-label" for="jurusanKWU">Kewirausahaan</label>
           </div>
+           @error('jurusan')
+            <small class="text-danger">{{ $message }}</small>
+          @enderror
         </div>
 
         <!-- Angkatan -->
         <div class="mb-3 pb-3">
           <label for="inputAngkatan" class="form-label">Angkatan</label>
           <input type="number" name="angkatan" id="inputAngkatan" class="form-control" required>
+           @error('angkatan')
+            <small class="text-danger">{{ $message }}</small>
+          @enderror
         </div>
 
         <hr class="border-light">
@@ -72,6 +90,9 @@
             </select>
             <button type="button" class="btn btn-primary" id="addMatkul">Tambah</button>
           </div>
+           @error('matakuliah')
+            <small class="text-danger">{{ $message }}</small>
+          @enderror
         </div>
 
         <!-- Tabel Mata Kuliah yang Diambil -->
@@ -114,22 +135,42 @@ document.addEventListener("DOMContentLoaded", () => {
   const tableBody = document.querySelector('#tabelMatkul tbody');
   const inputContainer = document.getElementById('matkulInputs');
   let counter = 1;
+  let totalSks = 0; // total SKS saat ini
+  const maxSks = 24;
 
+  // 🔹 Fungsi update total SKS dan tampilkan di bawah tabel
+  const updateTotalDisplay = () => {
+    let totalRow = document.getElementById('totalSksRow');
+    if (!totalRow) {
+      totalRow = document.createElement('tr');
+      totalRow.id = 'totalSksRow';
+      totalRow.innerHTML = `
+        <td colspan="2" class="text-end fw-bold">Total SKS</td>
+        <td colspan="2" id="totalSksCell" class="fw-bold text-warning">${totalSks}</td>
+      `;
+      tableBody.appendChild(totalRow);
+    } else {
+      document.getElementById('totalSksCell').textContent = totalSks;
+    }
+  };
+
+  // 🔹 Fungsi tambah matkul
   addBtn.addEventListener('click', () => {
     const selectedOption = select.options[select.selectedIndex];
-
-    // Debug: tampilkan apa yang JS baca
-    console.log('SELECTED OPTION (raw):', selectedOption);
     const id = selectedOption?.value?.trim() ?? '';
-   const namaMK = selectedOption.text.split('(')[0].trim();
-const sks = selectedOption.dataset.sks;
-const jurusan = selectedOption.text.split('-').pop().trim();
-const text = `${namaMK} (${sks} SKS) - ${jurusan}`;
-
-    console.log("DEBUG -> id:", id, "text:", text, "sks:", sks);
+    const namaMK = selectedOption.text.split('(')[0].trim();
+    const sks = parseInt(selectedOption.dataset.sks);
+    const jurusan = selectedOption.text.split('-').pop().trim();
+    const text = `${namaMK} (${sks} SKS) - ${jurusan}`;
 
     if (!id) {
       alert('Pilih mata kuliah dulu!');
+      return;
+    }
+
+    // Jika sudah lebih dari batas SKS
+    if (totalSks + sks > maxSks) {
+      alert(`Total SKS melebihi batas maksimal (${maxSks} SKS)!`);
       return;
     }
 
@@ -149,31 +190,42 @@ const text = `${namaMK} (${sks} SKS) - ${jurusan}`;
       <td>${counter++}</td>
       <td>${text}</td>
       <td>${sks}</td>
-      <td><button type="button" class="btn btn-danger btn-sm" onclick="removeMatkul('${id}')">Hapus</button></td>
+      <td><button type="button" class="btn btn-danger btn-sm" onclick="removeMatkul('${id}', ${sks})">Hapus</button></td>
     `;
     tableBody.appendChild(row);
 
     // Tambah hidden input untuk dikirim ke controller
     const hidden = document.createElement('input');
     hidden.type = 'hidden';
-    hidden.name = 'matakuliah[]'; // pastikan controller menerima 'matakuliah'
+    hidden.name = 'matakuliah[]';
     hidden.value = id;
     hidden.id = `input_${id}`;
     inputContainer.appendChild(hidden);
+
+    // Tambah total SKS
+    totalSks += sks;
+    updateTotalDisplay();
   });
+
+  // 🔹 Fungsi hapus matkul
+  window.removeMatkul = (id, sks) => {
+    document.getElementById(`matkul_${id}`)?.remove();
+    document.getElementById(`input_${id}`)?.remove();
+
+    // Kurangi total SKS
+    totalSks -= sks;
+    updateTotalDisplay();
+
+    // Jika kosong, tampilkan pesan
+    const tableBodyRows = [...tableBody.querySelectorAll('tr')].filter(tr => !tr.id.includes('totalSksRow'));
+    if (tableBodyRows.length === 0) {
+      tableBody.innerHTML = `
+        <tr id="emptyRow">
+          <td colspan="4" class="text-center text-secondary">Belum ada mata kuliah dipilih</td>
+        </tr>`;
+      totalSks = 0;
+    }
+  };
 });
-
-function removeMatkul(id) {
-  document.getElementById(`matkul_${id}`)?.remove();
-  document.getElementById(`input_${id}`)?.remove();
-
-  const tableBody = document.querySelector('#tabelMatkul tbody');
-  if (tableBody.children.length === 0) {
-    tableBody.innerHTML = `
-      <tr id="emptyRow">
-        <td colspan="4" class="text-center text-secondary">Belum ada mata kuliah dipilih</td>
-      </tr>`;
-  }
-}
 </script>
 @endsection

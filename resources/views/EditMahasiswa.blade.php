@@ -5,6 +5,17 @@
   <div class="card bg-dark text-white" style="width: 45rem;">
     <div class="card-header text-center fs-3">Edit Mahasiswa</div>
     <div class="card-body">
+       @if ($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <strong>Terjadi kesalahan:</strong>
+          <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+              <li>{{ $error }}</li>
+            @endforeach
+          </ul>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      @endif
       <form action="{{ route('UpdateMahasiswa', $mahasiswa->id) }}" method="POST">
         @csrf
         @method('PUT')
@@ -127,7 +138,6 @@
   </div>
 </div>
 @endsection
-
 @section('script_mahasiswa')
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -135,58 +145,98 @@ document.addEventListener("DOMContentLoaded", () => {
   const addBtn = document.getElementById('addMatkul');
   const tableBody = document.querySelector('#tabelMatkul tbody');
   const inputContainer = document.getElementById('matkulInputs');
-  let counter = {{ $mahasiswa->matakuliah->count() + 1 }};
+  let counter = 1;
+  let totalSks = 0; // total SKS saat ini
+  const maxSks = 24;
 
+  // 🔹 Fungsi update total SKS dan tampilkan di bawah tabel
+  const updateTotalDisplay = () => {
+    let totalRow = document.getElementById('totalSksRow');
+    if (!totalRow) {
+      totalRow = document.createElement('tr');
+      totalRow.id = 'totalSksRow';
+      totalRow.innerHTML = `
+        <td colspan="2" class="text-end fw-bold">Total SKS</td>
+        <td colspan="2" id="totalSksCell" class="fw-bold text-warning">${totalSks}</td>
+      `;
+      tableBody.appendChild(totalRow);
+    } else {
+      document.getElementById('totalSksCell').textContent = totalSks;
+    }
+  };
+
+  // 🔹 Fungsi tambah matkul
   addBtn.addEventListener('click', () => {
     const selectedOption = select.options[select.selectedIndex];
     const id = selectedOption?.value?.trim() ?? '';
-  const namaMK = selectedOption.text.split('(')[0].trim();
-const sks = selectedOption.dataset.sks;
-const jurusan = selectedOption.text.split('-').pop().trim();
-const text = `${namaMK} (${sks} SKS) - ${jurusan}`;
+    const namaMK = selectedOption.text.split('(')[0].trim();
+    const sks = parseInt(selectedOption.dataset.sks);
+    const jurusan = selectedOption.text.split('-').pop().trim();
+    const text = `${namaMK} (${sks} SKS) - ${jurusan}`;
 
     if (!id) {
       alert('Pilih mata kuliah dulu!');
       return;
     }
 
+    // Jika sudah lebih dari batas SKS
+    if (totalSks + sks > maxSks) {
+      alert(`Total SKS melebihi batas maksimal (${maxSks} SKS)!`);
+      return;
+    }
+
+    // Hapus placeholder jika ada
+    document.getElementById('emptyRow')?.remove();
+
+    // Cegah duplikat
     if (document.getElementById(`matkul_${id}`)) {
       alert('Mata kuliah sudah dipilih!');
       return;
     }
 
-    document.getElementById('emptyRow')?.remove();
-
+    // Tambah baris tabel
     const row = document.createElement('tr');
     row.id = `matkul_${id}`;
     row.innerHTML = `
       <td>${counter++}</td>
       <td>${text}</td>
       <td>${sks}</td>
-      <td><button type="button" class="btn btn-danger btn-sm" onclick="removeMatkul('${id}')">Hapus</button></td>
+      <td><button type="button" class="btn btn-danger btn-sm" onclick="removeMatkul('${id}', ${sks})">Hapus</button></td>
     `;
     tableBody.appendChild(row);
 
+    // Tambah hidden input untuk dikirim ke controller
     const hidden = document.createElement('input');
     hidden.type = 'hidden';
     hidden.name = 'matakuliah[]';
     hidden.value = id;
     hidden.id = `input_${id}`;
     inputContainer.appendChild(hidden);
+
+    // Tambah total SKS
+    totalSks += sks;
+    updateTotalDisplay();
   });
+
+  // 🔹 Fungsi hapus matkul
+  window.removeMatkul = (id, sks) => {
+    document.getElementById(`matkul_${id}`)?.remove();
+    document.getElementById(`input_${id}`)?.remove();
+
+    // Kurangi total SKS
+    totalSks -= sks;
+    updateTotalDisplay();
+
+    // Jika kosong, tampilkan pesan
+    const tableBodyRows = [...tableBody.querySelectorAll('tr')].filter(tr => !tr.id.includes('totalSksRow'));
+    if (tableBodyRows.length === 0) {
+      tableBody.innerHTML = `
+        <tr id="emptyRow">
+          <td colspan="4" class="text-center text-secondary">Belum ada mata kuliah dipilih</td>
+        </tr>`;
+      totalSks = 0;
+    }
+  };
 });
-
-function removeMatkul(id) {
-  document.getElementById(`matkul_${id}`)?.remove();
-  document.getElementById(`input_${id}`)?.remove();
-
-  const tableBody = document.querySelector('#tabelMatkul tbody');
-  if (tableBody.children.length === 0) {
-    tableBody.innerHTML = `
-      <tr id="emptyRow">
-        <td colspan="4" class="text-center text-secondary">Belum ada mata kuliah dipilih</td>
-      </tr>`;
-  }
-}
 </script>
 @endsection

@@ -20,15 +20,59 @@ class MahasiswaController extends Controller
     }
 
     public function store(Request $request){
-        $data = $request->validate([
-            'name' => 'required',
-            'NIM' => 'required',
-            'tempat_lahir' => 'required',
-            'tanggal_lahir' => 'required',
-            'jurusan' => 'required',
-            'angkatan' => 'required',
-            'matakuliah' => 'array|required'
-        ]);
+
+        $rules = [
+        'name' => 'required|string|min:3|max:100',
+        'NIM' => 'required|string|min:5|max:15|unique:table_mahasiswa,NIM',
+        'tempat_lahir' => 'required|string|min:3|max:50',
+        'tanggal_lahir' => 'required|date',
+        'jurusan' => 'required|in:Sistem Teknologi Informasi,Bisnis Digital,Kewirausahaan',
+        'angkatan' => 'required|integer|min:1900|max:' . date('Y'),
+        'matakuliah' => 'required|array|min:1',
+        'matakuliah.*' => 'integer|exists:table_matakuliah,id_MK',
+    ];
+
+    $messages = [
+        // Nama
+        'name.required' => 'Nama mahasiswa wajib diisi!',
+        'name.string' => 'Nama mahasiswa harus berupa teks!',
+        'name.min' => 'Nama mahasiswa minimal 3 karakter!',
+        'name.max' => 'Nama mahasiswa maksimal 100 karakter!',
+
+        // NIM
+        'NIM.required' => 'NIM wajib diisi!',
+        'NIM.string' => 'NIM harus berupa teks!',
+        'NIM.min' => 'NIM minimal 5 karakter!',
+        'NIM.max' => 'NIM maksimal 15 karakter!',
+        'NIM.unique' => 'NIM ini sudah terdaftar!',
+
+        // Tempat Lahir
+        'tempat_lahir.required' => 'Tempat lahir wajib diisi!',
+        'tempat_lahir.string' => 'Tempat lahir harus berupa teks!',
+        'tempat_lahir.min' => 'Tempat lahir minimal 3 karakter!',
+        'tempat_lahir.max' => 'Tempat lahir maksimal 50 karakter!',
+
+        // Tanggal Lahir
+        'tanggal_lahir.required' => 'Tanggal lahir wajib diisi!',
+        'tanggal_lahir.date' => 'Format tanggal lahir tidak valid!',
+
+        // Jurusan
+        'jurusan.required' => 'Jurusan wajib dipilih!',
+        'jurusan.in' => 'Jurusan yang dipilih tidak valid!',
+
+        // Angkatan
+        'angkatan.required' => 'Angkatan wajib diisi!',
+        'angkatan.integer' => 'Angkatan harus berupa angka!',
+        'angkatan.min' => 'Angkatan terlalu kecil!',
+        'angkatan.max' => 'Angkatan tidak boleh melebihi tahun sekarang!',
+
+        // Mata Kuliah
+        'matakuliah.required' => 'Pilih minimal satu mata kuliah!',
+        'matakuliah.array' => 'Format data mata kuliah tidak valid!',
+        'matakuliah.*.exists' => 'Salah satu mata kuliah tidak ditemukan di database!',
+    ];
+
+         $data = $request->validate($rules, $messages);
 
         $mahasiswa = Mahasiswa::create([
             'name' => $data['name'],
@@ -62,15 +106,58 @@ class MahasiswaController extends Controller
 
     public function update($id,Request $request ){
 
-         $data = $request->validate([
-            'name' => 'required',
-            'NIM' => 'required',
-            'tempat_lahir' => 'required',
-            'tanggal_lahir' => 'required',
-            'jurusan' => 'required',
-            'angkatan' => 'required',
-            'matakuliah' => 'array|required'
-        ]);
+         $rules = [
+        'name' => 'required|string|min:3|max:100',
+        'NIM' => 'required|string|min:5|max:15|unique:table_mahasiswa,NIM',
+        'tempat_lahir' => 'required|string|min:3|max:50',
+        'tanggal_lahir' => 'required|date',
+        'jurusan' => 'required|in:Sistem Teknologi Informasi,Bisnis Digital,Kewirausahaan',
+        'angkatan' => 'required|integer|min:1900|max:' . date('Y'),
+        'matakuliah' => 'required|array|min:1',
+        'matakuliah.*' => 'integer|exists:table_matakuliah,id_MK',
+    ];
+
+    $messages = [
+        // Nama
+        'name.required' => 'Nama mahasiswa wajib diisi!',
+        'name.string' => 'Nama mahasiswa harus berupa teks!',
+        'name.min' => 'Nama mahasiswa minimal 3 karakter!',
+        'name.max' => 'Nama mahasiswa maksimal 100 karakter!',
+
+        // NIM
+        'NIM.required' => 'NIM wajib diisi!',
+        'NIM.string' => 'NIM harus berupa teks!',
+        'NIM.min' => 'NIM minimal 5 karakter!',
+        'NIM.max' => 'NIM maksimal 15 karakter!',
+        'NIM.unique' => 'NIM ini sudah terdaftar!',
+
+        // Tempat Lahir
+        'tempat_lahir.required' => 'Tempat lahir wajib diisi!',
+        'tempat_lahir.string' => 'Tempat lahir harus berupa teks!',
+        'tempat_lahir.min' => 'Tempat lahir minimal 3 karakter!',
+        'tempat_lahir.max' => 'Tempat lahir maksimal 50 karakter!',
+
+        // Tanggal Lahir
+        'tanggal_lahir.required' => 'Tanggal lahir wajib diisi!',
+        'tanggal_lahir.date' => 'Format tanggal lahir tidak valid!',
+
+        // Jurusan
+        'jurusan.required' => 'Jurusan wajib dipilih!',
+        'jurusan.in' => 'Jurusan yang dipilih tidak valid!',
+
+        // Angkatan
+        'angkatan.required' => 'Angkatan wajib diisi!',
+        'angkatan.integer' => 'Angkatan harus berupa angka!',
+        'angkatan.min' => 'Angkatan terlalu kecil!',
+        'angkatan.max' => 'Angkatan tidak boleh melebihi tahun sekarang!',
+
+        // Mata Kuliah
+        'matakuliah.required' => 'Pilih minimal satu mata kuliah!',
+        'matakuliah.array' => 'Format data mata kuliah tidak valid!',
+        'matakuliah.*.exists' => 'Salah satu mata kuliah tidak ditemukan di database!',
+    ];
+
+         $data = $request->validate($rules, $messages);
 
           $mahasiswa = Mahasiswa::findOrFail($id);
 
